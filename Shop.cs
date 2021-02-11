@@ -8,6 +8,8 @@ namespace DnDPlayerMaker
     {
         static public List<Weapon> WeaponsList = new List<Weapon>();
         static public List<Equipment> EquipmentList = new List<Equipment>();
+        static public List<Armor> ArmorList = new List<Armor>();
+        
 
         //сюда вписать всё оружие и предметы (бля)
         static Shop()
@@ -23,36 +25,20 @@ namespace DnDPlayerMaker
             EquipmentList.Add(new Equipment("Тестовый предмет 3", 30, "бла бла бла"));
             EquipmentList.Add(new Equipment("Тестовый предмет 4", 40, "бла бла бла"));
             EquipmentList.Add(new Equipment("Тестовый предмет 5", 50, "бла бла бла"));
+
+            ArmorList.Add(new Armor("Кожанный доспех"         , 1000,   ArmorType.Лёгкий,  2, 0, 8));
+            ArmorList.Add(new Armor("Клёпаный кожанный доспех", 2500,   ArmorType.Лёгкий,  3, 0, 7));
+            ArmorList.Add(new Armor("Кольчужная рубаха"       , 10000,  ArmorType.Лёгкий,  4, 0, 6));
+            ArmorList.Add(new Armor("Сыромятный доспех"       , 1500,   ArmorType.Средний, 4, 0, 5));
+            ArmorList.Add(new Armor("Чешуйчатый доспех"       , 5000,   ArmorType.Средний, 5, 0, 4));
+            ArmorList.Add(new Armor("Кольчуга"                , 15000,  ArmorType.Средний, 6, 0, 3));
+            ArmorList.Add(new Armor("Пластинчатый доспех"     , 20000,  ArmorType.Тяжёлый, 7, 0, 2));
+            ArmorList.Add(new Armor("Кольчужно-латный доспех" , 60000,  ArmorType.Тяжёлый, 8, 0, 1));
+            ArmorList.Add(new Armor("Полный латный доспех"    , 150000, ArmorType.Тяжёлый, 9, 0, 0));
+            ArmorList.Add(new Armor("Лёгкий щит"              , 900,    ArmorType.Щит    , 1, 0, 100));
+            ArmorList.Add(new Armor("Тяжёлый щит"             , 2000,   ArmorType.Щит    , 2, 0, 100));
         }
 
-        static public string[] GetWeaponsNameArray()
-        {
-            string[] output = new string[WeaponsList.Count];
-            for (int i = 0; i < WeaponsList.Count; i++)
-            {
-                string prof = WeaponsList[i].Proficiency == 0 ? "Импровиз." : WeaponsList[i].Proficiency == 1 ? "Простое" : "Особое";
-                string type = WeaponsList[i].IsLongRange ? WeaponsList[i].Type.ToString() : "Б/Б";
-                string name = WeaponsList[i].Name;
-                string damage = WeaponsList[i].DamageList[0].DamageTimes.ToString() + "d" + WeaponsList[i].DamageList[0].DamageNum.ToString() + (WeaponsList[i].IsPowerMatters ? "+СИЛ" : "");
-                string crit = WeaponsList[i].CritNum.ToString() + "x" + WeaponsList[i].CritTimes.ToString();
-                string damageType = WeaponsList[i].DamageList[0].Type[0].ToString();
-                string distance = WeaponsList[i].Distance.ToString() + "фт";
-                string holding = WeaponsList[i].Holding.ToString();
-                string price = WeaponsList[i].Price.ToString();
-
-                output[i] = String.Format("{0,-10} {1,-12} {2,-20} {3,-8} {4,-4} {5,-9} {6,-5} {7,-4} {8,-5}", prof, type, name, damage, crit, damageType, distance, holding, price);
-            }
-
-            return output;
-        }
-
-        //доработать отображение предметов (добавить отображение цены и описание)
-        static public string[] GetItemsNameArray()
-        {
-            string[] output = new string[EquipmentList.Count];
-            for (int i = 0; i < EquipmentList.Count; i++) output[i] = EquipmentList[i].Name;
-
-            return output;
-        }
+        
     }
 }

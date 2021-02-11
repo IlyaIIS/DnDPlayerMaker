@@ -82,6 +82,34 @@ namespace DnDPlayerMaker
         Дробящий //Дописать остальные типы урона
     }
 
+    class Armor : IAmItem
+    {
+        public string Name { get; private set; }
+        public int Price { get; private set; }
+        public ArmorType Type { get; private set; }
+        public int Bonus { get; private set; }
+        public int Penalty { get; private set; }
+        public int MaxDexterity { get; private set; }
+
+        public Armor(string name, int price, ArmorType type, int bonus, int penalty, int maxDexterity)
+        {
+            Name = name;
+            Price = price;
+            Type = type;
+            Bonus = bonus;
+            Penalty = penalty;
+            MaxDexterity = maxDexterity;
+        }
+    }
+
+    public enum ArmorType
+    {
+        Лёгкий,
+        Средний,
+        Тяжёлый,
+        Щит
+    }
+
     class Equipment : IAmItem
     {
         public string Name { get; private set; }

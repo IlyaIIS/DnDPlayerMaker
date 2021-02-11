@@ -53,6 +53,7 @@ namespace DnDPlayerMaker
                 {
                     "Основная информация",
                     "Характеристики",
+                    "Особенности класса",
                     "Инвентарь",
                     "Вся информация"
                 });
@@ -71,10 +72,10 @@ namespace DnDPlayerMaker
                             DoCharacteristicMenuInteractions();
                             break;
                         case 2:
-                            DoInventoryInteractions();
+                            DoPlayerFeatureMenuInteractions();
                             break;
                         case 3:
-                            // добавить меню со всей информацией (+добавить меню для заклинаний и навыков)
+                            DoInventoryInteractions();
                             break;
                         default:
                             throw new Exception("Выход за пределы меню");
@@ -214,17 +215,16 @@ namespace DnDPlayerMaker
             Console.Clear();
             Console.WindowWidth = 140;
             DrawWindowWithTitle(0, 2, 21, 24, "Инвентарь");
-            DrawWindowWithTitle(22, 2, 108, 24, String.Format("{0,-10} {1,-12} {2,-20} {3,-8} {4,-4} {5,-9} {6,-5} {7,-4} {8,-5}", "Владение", "Тип", "Название", "Урон", "Крит", "Тип урона", "Дист.", "Хват", "Цена"));
-            DrawPointsMenu(-1, 23, 5, false, Shop.GetWeaponsNameArray());
-            int place = 0; // 0-инвентарь, 1-оружие, 2-предметы
-            int[] pos = new int[3];
+            DrawWindowWithTitle(22, 2, 108, 24, String.Format(WeaponStringFormat, "Владение", "Тип", "Название", "Урон", "Крит", "Тип урона", "Дист.", "Хват", "Цена"));
+            DrawPointsMenu(-1, 23, 5, false, GetWeaponsNameArray());
+            int place = 0; // 0-инвентарь, 1-оружие, 2-броня, 3-предметы
+            int[] pos = new int[4];
             ConsoleKeyInfo key;
             do
             {
-                string[] nameArray = (place == 0) ? Player.GetItemsNameArray() : (place == 1) ? Shop.GetWeaponsNameArray() : Shop.GetItemsNameArray();
-                if (place == 0) DrawPointsMenu(pos[place], 1, 5, false, nameArray);
-                if (place == 1) DrawPointsMenu(pos[place], 23, 5, false, nameArray);
-                if (place == 2) DrawPointsMenu(pos[place], 23, 5, false, nameArray);
+                string[] nameArray = (place == 0) ? Player.GetItemsNameArray() : (place == 1) ? GetWeaponsNameArray() : (place == 2) ? GetArmorNameArray() : GetEquipmentsNameArray() ;
+                if (place == 0) DrawPointsMenu(pos[place], 1,  5, false, nameArray);
+                else            DrawPointsMenu(pos[place], 23, 5, false, nameArray);
                 DrawCahsWindow();
                 DrawPlaceWindow(place);
 
@@ -236,24 +236,34 @@ namespace DnDPlayerMaker
                 if (key.Key == ConsoleKey.LeftArrow && place != 0)
                 {
                     place--;
-                    if (place == 0) DrawPointsMenu(-1, 23, 5, false, Shop.GetWeaponsNameArray());
+                    if (place == 0) DrawPointsMenu(-1, 23, 5, false, GetWeaponsNameArray());
                     if (place == 1)
                     {
+                        ClearWindow(22, 2, 91, 24);
+                        DrawWindowWithTitle(22, 2, 108, 24, String.Format(WeaponStringFormat, "Владение", "Тип", "Название", "Урон", "Крит", "Тип урона", "Дист.", "Хват", "Цена"));
+                    }
+                    if (place == 2)
+                    {
                         ClearWindow(22, 2, 43, 24);
-                        DrawWindowWithTitle(22, 2, 108, 24, String.Format("{0,-10} {1,-12} {2,-20} {3,-8} {4,-4} {5,-9} {6,-5} {7,-4} {8,-5}", "Владение", "Тип", "Название", "Урон", "Крит", "Тип урона", "Дист.", "Хват", "Цена"));
+                        DrawWindowWithTitle(22, 2, 91, 24, String.Format(ArmorStringFormat, "Тип(Вес)", "Название", "Бонус к КБ", "Штраф", "Макс. ЛВК", "Цена"));
                     }
                 }
-                if (key.Key == ConsoleKey.RightArrow && place != 2)
+                if (key.Key == ConsoleKey.RightArrow && place != 3)
                 {
                     place++;
                     if (place == 1)
                     {
                         DrawPointsMenu(-1, 1, 5, false, Player.GetItemsNameArray());
-                        DrawWindowWithTitle(22, 2, 108, 24, String.Format("{0,-10} {1,-12} {2,-20} {3,-8} {4,-4} {5,-9} {6,-5} {7,-4} {8,-5}", "Владение", "Тип", "Название", "Урон", "Крит", "Тип урона", "Дист.", "Хват", "Цена"));
+                        DrawWindowWithTitle(22, 2, 108, 24, String.Format(WeaponStringFormat, "Владение", "Тип", "Название", "Урон", "Крит", "Тип урона", "Дист.", "Хват", "Цена"));
                     }
                     if (place == 2)
                     {
                         ClearWindow(22, 2, 123, 24);
+                        DrawWindowWithTitle(22, 2, 91, 24, String.Format(ArmorStringFormat, "Тип(Вес)", "Название", "Бонус к КБ", "Штраф", "Макс. ЛВК", "Цена"));
+                    }
+                    if (place == 3)
+                    {
+                        ClearWindow(22, 2, 91, 24);
                         DrawWindowWithTitle(22, 2, 43, 24, "Снаряжение");
                     }
                 }
@@ -264,6 +274,9 @@ namespace DnDPlayerMaker
                     if (place == 0 && Player.ItemsList.Count > 0)
                     {
                         Player.Cash += Player.ItemsList[pos[place]].Price;
+
+                        ClearWindow(1, 6, 20, 23);
+                        DrawWindowWithTitle(0, 2, 21, 24, "Инвентарь");
                         Player.ItemsList.Remove(Player.ItemsList[pos[place]]);
                         if (pos[place] != 0) pos[place] -= 1;
                     }
@@ -276,6 +289,14 @@ namespace DnDPlayerMaker
                         }
                     }
                     if (place == 2)
+                    {
+                        if (Player.Cash >= Shop.ArmorList[pos[place]].Price)
+                        {
+                            Player.Cash -= Shop.ArmorList[pos[place]].Price;
+                            Player.ItemsList.Add(Shop.ArmorList[pos[place]]);
+                        }
+                    }
+                    if (place == 3)
                     {
                         if (Player.Cash >= Shop.EquipmentList[pos[place]].Price)
                         {
@@ -307,10 +328,107 @@ namespace DnDPlayerMaker
             static void DrawPlaceWindow(int place)
             {
                 Console.SetCursorPosition(0, 1);
-                DrawIteams(18, place, new string[] { "инвентарь", "оружие", "предметы" });
+                DrawIteams(18, place, new string[] { "инвентарь", "оружие", "броня", "предметы" });
             }
         }
 
+        static void DoPlayerFeatureMenuInteractions()
+        {
+            if (Player.Class == PlClass.Воин)
+            {
+                Console.Clear();
+                DrawWindowWithTitle(1, 2, 87, 24, String.Format(WeaponStringFormat, "Владение", "Тип", "Название", "Урон", "Крит", "Тип урона", "Дист.", "Хват", "Цена"));
+                DrawPointsMenu(-1, 2, 5, false, GetWeaponsNameArray());
+                DrawPlayersWeapon();
+                int pos = 0;
+                ConsoleKeyInfo key;
+                do
+                {
+                    DrawPointsMenu(pos, 2, 5, false, GetWeaponsNameArray());
+
+                    key = Console.ReadKey(true);
+
+                    TryMovePos(Shop.WeaponsList.Count, key, ref pos);
+
+                    if (key.Key == ConsoleKey.Enter)
+                    {
+                        Player.SpecialWarriorsWeapon = Shop.WeaponsList[pos];
+                        DrawPlayersWeapon();
+                    }
+                } while (key.Key != ConsoleKey.Escape);
+                Console.Clear();
+
+                static void DrawPlayersWeapon()
+                {
+                    string localStr = " ║Выбранное оружие: " + Player.SpecialWarriorsWeapon.Name;
+                    Console.SetCursorPosition(1, 0);
+                    Console.WriteLine("╔" + new string('═', localStr.Length - 2) + "╗");
+                    Console.Write(localStr);
+                    Console.SetCursorPosition(localStr.Length, 1);
+                    Console.Write("║");
+                    Console.SetCursorPosition(1, 2);
+                    Console.Write("╠" + new string('═', localStr.Length - 2) + "╩");
+                }
+            }
+            if (Player.Class == PlClass.Волшебник)
+            {
+
+            }
+        }
+        static public string WeaponStringFormat = "{0,-10} {1,-12} {2,-20} {3,-8} {4,-4} {5,-9} {6,-5} {7,-4} {8,-5}";
+        static public string[] GetWeaponsNameArray()
+        {
+            string[] output = new string[Shop.WeaponsList.Count];
+            for (int i = 0; i < Shop.WeaponsList.Count; i++)
+            {
+                Weapon weapon = Shop.WeaponsList[i];
+
+                string prof = weapon.Proficiency == 0 ? "Импровиз." : weapon.Proficiency == 1 ? "Простое" : "Особое";
+                string type = weapon.IsLongRange ? weapon.Type.ToString() : "Б/Б";
+                string name = weapon.Name;
+                string damage = weapon.DamageList[0].DamageTimes.ToString() + "d" + weapon.DamageList[0].DamageNum.ToString() + (weapon.IsPowerMatters ? "+СИЛ" : "");
+                string crit = weapon.CritNum.ToString() + "x" + weapon.CritTimes.ToString();
+                string damageType = weapon.DamageList[0].Type[0].ToString();
+                string distance = weapon.Distance.ToString() + "фт";
+                string holding = weapon.Holding.ToString();
+                string price = weapon.Price.ToString();
+
+                output[i] = String.Format(WeaponStringFormat, prof, type, name, damage, crit, damageType, distance, holding, price);
+            }
+
+            return output;
+        }
+
+        //доработать отображение предметов (добавить отображение цены и описание)
+        static public string EquipmentStringFormat = "";
+        static public string[] GetEquipmentsNameArray()
+        {
+            string[] output = new string[Shop.EquipmentList.Count];
+            for (int i = 0; i < Shop.EquipmentList.Count; i++) 
+                output[i] = Shop.EquipmentList[i].Name;
+
+            return output;
+        }
+        static public string ArmorStringFormat = "{0,-8} {1,-25} {2,-10} {3,-5} {4,-9} {5,-6}";
+        static public string[] GetArmorNameArray()
+        {
+            string[] output = new string[Shop.ArmorList.Count];
+            for (int i = 0; i < Shop.ArmorList.Count; i++)
+            {
+                Armor armor = Shop.ArmorList[i];
+
+                ArmorType type = armor.Type;
+                string name = armor.Name;
+                int bonus = armor.Bonus;
+                int penalty = armor.Penalty;
+                string maxDexterity = armor.Type != ArmorType.Щит ? armor.MaxDexterity.ToString() : "-";
+                int price = armor.Price;
+
+                output[i] = String.Format(ArmorStringFormat, type, name, bonus, penalty, maxDexterity, price);
+            }
+
+            return output;
+        }
         //рисует верикальный список, подсвечивая ячейку под номером pos (+перегрузки на все случаи жизни)
         static void DrawPointsMenu(int pos, string[] str)
         {

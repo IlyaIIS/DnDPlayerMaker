@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DnDPlayerMaker
 {
-    static public class Player
+    static class Player
     {
         static public string Name { get; set; }
         static public Gender Gender { get; set; }
@@ -15,6 +15,7 @@ namespace DnDPlayerMaker
         static public int CharacteristicPoints { get; set; }
         static public List<IAmItem> ItemsList = new List<IAmItem>();
         static public int Cash { get; set; }
+        static public Weapon SpecialWarriorsWeapon { get; set; }
 
         static public void SetNewPlayer()
         {
@@ -27,6 +28,7 @@ namespace DnDPlayerMaker
             for (int i = 0; i < Characteristic.Length; i++) Characteristic[i] = 10;
             CharacteristicPoints = 20;
             Cash = new int[] { 17500, 14000, 7000, 14000, 10500 }[(int)Class];
+            SpecialWarriorsWeapon = new Weapon("", 0, false, false, false, 0, 0, 0, 0, null);
         }
 
         static public string[] GetItemsNameArray()
